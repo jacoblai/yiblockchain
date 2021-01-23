@@ -75,7 +75,7 @@ func (l *LvStore) CheckTx(req abcitypes.RequestCheckTx) abcitypes.ResponseCheckT
 	if ok, _ := l.db.Has(key, nil); ok {
 		return abcitypes.ResponseCheckTx{Code: 2, GasWanted: 1}
 	}
-	return abcitypes.ResponseCheckTx{Code: abcitypes.CodeTypeOK, GasWanted: 1}
+	return abcitypes.ResponseCheckTx{Code: 0, GasWanted: 1}
 }
 
 func (LvStore) InitChain(req abcitypes.RequestInitChain) abcitypes.ResponseInitChain {
@@ -97,7 +97,7 @@ func (l *LvStore) DeliverTx(req abcitypes.RequestDeliverTx) abcitypes.ResponseDe
 		return abcitypes.ResponseDeliverTx{Code: 2}
 	}
 	_ = l.currentBatch.Put(key, value, nil)
-	return abcitypes.ResponseDeliverTx{Code: abcitypes.CodeTypeOK}
+	return abcitypes.ResponseDeliverTx{Code: 0}
 }
 
 func (l *LvStore) EndBlock(req abcitypes.RequestEndBlock) abcitypes.ResponseEndBlock {

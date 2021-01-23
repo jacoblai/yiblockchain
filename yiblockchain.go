@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/jacoblai/yiblockchain/store"
 	"github.com/spf13/viper"
@@ -14,11 +15,16 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"os/user"
 	"path/filepath"
+	"strings"
 	"syscall"
 )
 
 func main() {
+	var configFile string
+	flag.StringVar(&configFile, "config", "$HOME/.tendermint/config/config.toml", "Path to config.toml")
+	flag.Parse()
 	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
 		log.Fatal(err)
@@ -28,10 +34,18 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if strings.Contains(configFile, "$HOME") {
+		usr, err := user.Current()
+		if err != nil {
+			log.Fatal(err)
+		}
+		configFile = strings.Replace(configFile, "$HOME", usr.HomeDir, 1)
+	}
+
 	// read config
 	config := cfg.DefaultConfig()
-	config.RootDir = filepath.Dir(filepath.Dir(dir + "/config/config.toml"))
-	viper.SetConfigFile(dir + "/config/config.toml")
+	config.RootDir = filepath.Dir(filepath.Dir(configFile))
+	viper.SetConfigFile(configFile)
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatal(err, "viper failed to read config file")
 	}
