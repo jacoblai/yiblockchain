@@ -22,9 +22,11 @@ import (
 )
 
 func main() {
-	var configFile string
-	flag.StringVar(&configFile, "config", "$HOME/.tendermint/config/config.toml", "Path to config.toml")
+	var (
+		configFile = flag.String("config", "$HOME/.tendermint/config/config.toml", "Path to config.toml")
+	)
 	flag.Parse()
+
 	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
 		log.Fatal(err)
@@ -34,18 +36,18 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if strings.Contains(configFile, "$HOME") {
+	if strings.Contains(*configFile, "$HOME") {
 		usr, err := user.Current()
 		if err != nil {
 			log.Fatal(err)
 		}
-		configFile = strings.Replace(configFile, "$HOME", usr.HomeDir, 1)
+		*configFile = strings.Replace(*configFile, "$HOME", usr.HomeDir, 1)
 	}
 
 	// read config
 	config := cfg.DefaultConfig()
-	config.RootDir = filepath.Dir(filepath.Dir(configFile))
-	viper.SetConfigFile(configFile)
+	config.RootDir = filepath.Dir(filepath.Dir(*configFile))
+	viper.SetConfigFile(*configFile)
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatal(err, "viper failed to read config file")
 	}
