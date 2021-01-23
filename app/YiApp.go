@@ -6,6 +6,7 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/filter"
 	"github.com/syndtr/goleveldb/leveldb/opt"
+	"github.com/tendermint/tendermint/abci/example/code"
 	abcitypes "github.com/tendermint/tendermint/abci/types"
 )
 
@@ -97,7 +98,7 @@ func (l *YiApp) DeliverTx(req abcitypes.RequestDeliverTx) abcitypes.ResponseDeli
 		return abcitypes.ResponseDeliverTx{Code: 2}
 	}
 	_ = l.currentBatch.Put(key, value, nil)
-	return abcitypes.ResponseDeliverTx{Code: 0}
+	return abcitypes.ResponseDeliverTx{Code: code.CodeTypeOK}
 }
 
 func (l *YiApp) EndBlock(req abcitypes.RequestEndBlock) abcitypes.ResponseEndBlock {
